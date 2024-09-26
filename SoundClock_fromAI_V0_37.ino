@@ -60,14 +60,14 @@ DCF77 DCF = DCF77(DCF_PIN, DCF_INTERRUPT);
 SoftwareSerial mp3Serial (8, 9);  // RX / TX
 DFRobotDFPlayerMini myDFPlayer;
 
-String softwareVersion = " 0.0.37.1 (alpha)";
+String softwareVersion = " 0.0.37.2 (alpha)";
 
-const float USB_THRESHOLD = 4.5;           // Schwellenwert zur Unterscheidung zwischen USB und Batterie
-const float BATTERY_THRESHOLD = 3.3;       // Spannung in Volt, unter der BOD aktiv bleiben soll
+const float USB_THRESHOLD = 4.5;           // Threshold to distinguish between USB and Battery
+const float BATTERY_THRESHOLD = 3.3;       // Voltage in Volts below which BOD should remain active
 const float VOLTAGE_DIVIDER_RATIO = 2.0;
 const float ADC_REF_VOLTAGE = 1.1;
 
-const uint8_t sleepMinutes = 3; // Temporarily value for the Sleep-Mode-Lenght in minutes
+const uint8_t sleepMinutes = 3; // (temporarily) Value for the Sleep-Mode-Lenght in Minutes
 const uint8_t sysVolume = 18;
 
 const uint8_t filesInFolder2 = 1;
@@ -126,7 +126,7 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(DCF_StatusLed, OUTPUT);
   pinMode(DCF_POWER_PIN, OUTPUT);
-    digitalWrite(DCF_POWER_PIN, HIGH);  // sometimes needed to activate the DCF77-Modul
+    digitalWrite(DCF_POWER_PIN, HIGH);  // sometimes needed to activate the DCF77-Module
     digitalWrite(DCF_StatusLed, HIGH);  // turn DCF-Status LED on 
     // permanent ON = DCF-Sync failed / short flash = DCF-Sync in Progress / permanent OFF = DCF-Sync successful
 
@@ -206,13 +206,13 @@ void loop() {
 }
 
 void activateDebug() {
-  //  // Warte eine bestimmte Zeit auf die serielle Verbindung
+  // // Wait a certain time for the serial connection
   // unsigned long startTime = millis();
   // while (!Serial && millis() - startTime < SERIAL_TIMEOUT) {
   //   ; // Warte
   // }
   
-  // DEBUG = Serial;  // Setze DEBUG auf true, wenn eine Verbindung besteht
+  // DEBUG = Serial;  // set DEBUG to true, if there is a connection
   
   // DEBUG_PRINTLN_F("Debug-Mode activated...");
 }
@@ -377,7 +377,7 @@ void syncTimeWithDCF() {
       }
 
       waitTimeLED(DCF_StatusLed, onDuration[0], offDuration[0], waitTime[0]);
-      // delay(60000); // wait a minute befor start the next attempt / Warte eine Minute vor dem nächsten Versuch
+      // delay(60000); // wait a minute before starting the next attempt / Warte eine Minute vor dem nächsten Versuch
     }
   }
   
@@ -503,8 +503,8 @@ void updateDateTime() {
   }
   
   setTime(now.hour(), now.minute(), now.second(), now.day(), now.month(), now.year());
-  // January 21, 2014 at 3am you would call:
-  // rtc.adjust(DateTime(2024, 7, 11, 23, 58, 0)); // temporarily to test some feature
+  // July 11th, 2024 at 11:58 pm you would call:
+  // rtc.adjust(DateTime(2024, 7, 11, 23, 58, 0)); // temporarily to test some features
 }
 
 bool chkPlayHours(const DateTime& now) {
@@ -606,44 +606,44 @@ void goToSleep(const DateTime& now, uint8_t sleepMinutes) {
 }
 
 float getBatteryVoltage() {
-  // Aktiviere den Spannungsteiler
+  // Activate the voltage divider
   digitalWrite(PWR_MEASURE_PIN, HIGH);
   delay(35);  // Short delay for a stibilization of the power on the measure pin/s
   
   // Reading (battery) power on pin A0
   int sensorValue = analogRead(BATTERY_PIN);
   
-  // Deaktiviere den Spannungsteiler
+  // Deactivate the voltage divider
   digitalWrite(PWR_MEASURE_PIN, LOW);
   
-  /* Umrechnung in Volt
-  // Wir multiplizieren mit 2, weil der Spannungsteiler die Spannung halbiert
-  // und mit 1.1, weil wir die interne 1.1V Referenz verwenden */
+  // Conversion to volts
+  // We multiply by 2 because the voltage divider halves the voltage
+  // and by 1.1 because we use the internal 1.1V reference
   return sensorValue * (ADC_REF_VOLTAGE / 1023.0) * VOLTAGE_DIVIDER_RATIO * VOLTAGE_DIVIDER_RATIO;
-  // falls mit LM4040 mit konstanter Referenzspannung
-  // return sensorValue * (5.0 / 1023.0) * VOLTAGE_DIVIDER_RATIO; statt V_D_R auf 2.0 setzen, falls V_D_R <> 2
+  // if with LM4040 with constant reference voltage
+  // return sensorValue * (5.0 / 1023.0) * VOLTAGE_DIVIDER_RATIO; set to 2.0 instead of V_D_R if V_D_R <> 2
 }
 
 bool isUSBPowered() {
-  // Aktiviere den Spannungsteiler
+  // Activate the voltage divider
   digitalWrite(PWR_MEASURE_PIN, HIGH);
   delay(30);  // short delay until voltage on the pins is stabilized
 
   pinMode(VIN_PIN, INPUT);
   int sensorValue = analogRead(VIN_PIN);
 
-  // Deaktiviere den Spannungsteiler wieder
+  // Deactivate the voltage divider
   digitalWrite(PWR_MEASURE_PIN, LOW);
 
-  // Berechne die Eingangsspannung
+  // Calculate the input voltage
   float vinVoltage = sensorValue * (ADC_REF_VOLTAGE / 1023.0) * VOLTAGE_DIVIDER_RATIO;
 
   if (vinVoltage > USB_THRESHOLD) {
-    if(Serial) { Serial.println(F("USB-Betrieb")); }
-    return true;  // USB-Betrieb
+    if(Serial) { Serial.println(F("USB-Operation")); }
+    return true;  // USB-Operation
   } else {
-    if(Serial) { Serial.println(F("Batteriebetrieb")); }
-    return false;  // Batteriebetrieb
+    if(Serial) { Serial.println(F("Battery-Operation")); }
+    return false;  // Battery-Operation
   }
 }
 
