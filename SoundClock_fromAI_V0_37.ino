@@ -1,6 +1,7 @@
 /* Projekt: Sound-Clock
  * Part: Main
- * Hardware: Arduino Nano V3/Every, RTC DS3231, DFPlayer Mini, DCF77
+ * Hardware: Arduino Nano V3/Every, RTC DS3231, DFPlayer Mini, DCF77-Module,
+ * Mini-Speaker (~ 1W), Push-Button, Battery-Holder/-Connector, some Resistors
  *
  * Description: With the Arduino, an DCF77, an RTC DS3221 and a DFPlayer Mini
  * I've created a small 'Box' that will play a sound every full hour from the 
@@ -59,7 +60,7 @@ DCF77 DCF = DCF77(DCF_PIN, DCF_INTERRUPT);
 SoftwareSerial mp3Serial (8, 9);  // RX / TX
 DFRobotDFPlayerMini myDFPlayer;
 
-String softwareVersion = " 0.0.37.0 (alpha)";
+String softwareVersion = " 0.0.37.1 (alpha)";
 
 const float USB_THRESHOLD = 4.5;           // Schwellenwert zur Unterscheidung zwischen USB und Batterie
 const float BATTERY_THRESHOLD = 3.3;       // Spannung in Volt, unter der BOD aktiv bleiben soll
